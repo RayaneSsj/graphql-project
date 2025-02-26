@@ -1,21 +1,14 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id")
   email     String   @unique
   password  String
   name      String
@@ -25,10 +18,10 @@ model User {
 }
 
 model Article {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id")
   title     String
   content   String
-  authorId  Int
+  authorId  String
   author    User     @relation(fields: [authorId], references: [id])
   comments  Comment[]
   likes     Like[]
@@ -36,18 +29,18 @@ model Article {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id")
   content   String
-  articleId Int
-  userId    Int
+  articleId String
+  userId    String
   article   Article  @relation(fields: [articleId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
 
 model Like {
-  id        Int      @id @default(autoincrement())
-  articleId Int
-  userId    Int
+  id        String   @id @default(auto()) @map("_id")
+  articleId String
+  userId    String
   article   Article  @relation(fields: [articleId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
