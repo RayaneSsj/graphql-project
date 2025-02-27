@@ -1,15 +1,10 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { userResolvers } from './revolvers/user.resolver';
+import { articleResolvers } from './revolvers/article.resolver';
 
 dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
-
-const prisma = new PrismaClient();
 
 const typeDefs = `
   type User {
@@ -18,40 +13,36 @@ const typeDefs = `
     email: String!
   }
 
+  type Article {
+    id: ID!
+    title: String!
+    content: String!
+    authorId: String!
+  }
+
   type Query {
     users: [User!]
+    articles: [Article!]
+    article(id: ID!): Article
   }
 
   type Mutation {
     signUp(name: String!, email: String!, password: String!): String
     signIn(email: String!, password: String!): String
+    createArticle(title: String!, content: String!, authorId: String!): Article
+    updateArticle(id: ID!, title: String, content: String): Article
+    deleteArticle(id: ID!): String
   }
 `;
 
 const resolvers = {
   Query: {
-    users: async () => await prisma.user.findMany(),
+    ...userResolvers.Query,
+    ...articleResolvers.Query,
   },
   Mutation: {
-    signUp: async (_: unknown, { name, email, password }: { name: string; email: string; password: string }) => {
-      const existingUser = await prisma.user.findUnique({ where: { email } });
-      if (existingUser) {
-        throw new Error('Email already in use');
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await prisma.user.create({
-        data: { name, email, password: hashedPassword },
-      });
-      return jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
-    },
-    signIn: async (_: unknown, { email, password }: { email: string; password: string }) => {
-      const user = await prisma.user.findUnique({ where: { email } });
-      if (!user || !(await bcrypt.compare(password, user.password))) {
-        throw new Error('Invalid credentials');
-      }
-      return jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
-    },
+    ...userResolvers.Mutation,
+    ...articleResolvers.Mutation,
   },
 };
 
