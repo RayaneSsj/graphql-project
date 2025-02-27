@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
   const [signIn, { loading, error }] = useMutation(SIGN_IN, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.signIn);
-      navigate("/");
+      navigate("/dashboard");
     },
   });
 
