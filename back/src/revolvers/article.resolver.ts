@@ -31,7 +31,7 @@ export const articleResolvers = {
     },
     deleteArticle: async (_: any, { id }: { id: string }) => {
       await prisma.article.delete({ where: { id } });
-      return `Article with ID ${id} deleted successfully.`;
+      return `L'article ${id} a bien été supprimé !`;
     },
   },
 };

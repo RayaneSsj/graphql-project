@@ -16,7 +16,7 @@ export const userResolvers = {
     signUp: async (_: unknown, { name, email, password }: { name: string; email: string; password: string }) => {
       const existingUser = await prisma.user.findUnique({ where: { email } });
       if (existingUser) {
-        throw new Error('Email already in use');
+        throw new Error('Email déjà utilisé');
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
