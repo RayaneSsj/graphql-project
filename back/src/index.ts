@@ -5,6 +5,7 @@ import { userResolvers } from './revolvers/user.resolver';
 import { articleResolvers } from './revolvers/article.resolver';
 import { commentResolvers } from './revolvers/comment.resolver';
 import { likeResolvers } from './revolvers/like.resolver';
+import { navigationResolvers } from './revolvers/navigation.resolver';
 
 
 dotenv.config();
@@ -21,6 +22,7 @@ const typeDefs = `
     title: String!
     content: String!
     authorId: String!
+    likeCount: Int
   }
 
   type Comment {
@@ -42,6 +44,9 @@ const typeDefs = `
     article(id: ID!): Article
     comments(articleId: String!): [Comment!]
     likes(articleId: String!): Int
+    latestArticles(limit: Int): [Article!]
+    filterArticlesByAuthor(authorId: String!): [Article!]
+    filterArticlesByPopularity(limit: Int): [Article!]
   }
 
   type Mutation {
@@ -57,12 +62,15 @@ const typeDefs = `
   }
 `;
 
+
+
 const resolvers = {
   Query: {
     ...userResolvers.Query,
     ...articleResolvers.Query,
     ...likeResolvers.Query,
     ...commentResolvers.Query,
+    ...navigationResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
