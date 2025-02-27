@@ -8,7 +8,7 @@ import client from "./apolloClient";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <BrowserRouter>
+      <BrowserRouter> 
         <App />
       </BrowserRouter>
     </ApolloProvider>

@@ -12,19 +12,21 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [signIn, { data, loading, error }] = useMutation(SIGN_IN);
+
+  const [signIn, { loading, error }] = useMutation(SIGN_IN, {
+    onCompleted: (data) => {
+      localStorage.setItem("token", data.signIn);
+      navigate("/");
+    },
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) return alert("Veuillez remplir tous les champs.");
     try {
-      const response = await signIn({ variables: { email, password } });
-      if (response.data.signIn) {
-        localStorage.setItem("token", response.data.signIn);
-        alert("Connexion réussie !");
-        navigate("/dashboard");
-      }
+      await signIn({ variables: { email, password } });
     } catch (err) {
-      alert("Identifiants incorrects.");
+      console.error(err);
     }
   };
 
@@ -32,13 +34,26 @@ const LoginPage: React.FC = () => {
     <div>
       <h2>Connexion</h2>
       <form onSubmit={handleLogin}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Mot de passe"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <button type="submit" disabled={loading}>
-          {loading ? "Chargement..." : "Se connecter"}
+          {loading ? "Connexion..." : "Se connecter"}
         </button>
       </form>
       {error && <p style={{ color: "red" }}>{error.message}</p>}
+
+      <p>Pas encore de compte ?</p>
+      <button onClick={() => navigate("/register")}>S'inscrire</button>
     </div>
   );
 };
