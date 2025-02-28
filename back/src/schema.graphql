@@ -1,0 +1,55 @@
+type Query {
+  users: [User!]!
+}
+
+type Mutation {
+  signUp(name: String!, email: String!, password: String!): String!
+  signIn(email: String!, password: String!): String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Query {
+  users: [User!]!
+  articles: [Article!]!
+  comments: [Comment!]!
+  likes: [Like!]!
+}
+
+type Mutation {
+  signUp(name: String!, email: String!, password: String!): String!
+  signIn(email: String!, password: String!): String!
+  createArticle(title: String!, content: String!, authorId: ID!): Article!
+  addComment(articleId: ID!, content: String!, authorId: ID!): Comment!
+  likeArticle(articleId: ID!, userId: ID!): Like!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Article {
+  id: ID!
+  title: String!
+  content: String!
+  author: User!
+}
+
+type Comment {
+  id: ID!
+  content: String!
+  article: Article!
+  author: User!
+}
+
+type Like {
+  id: ID!
+  article: Article!
+  user: User!
+}

@@ -1,37 +1,50 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
+import { Resolvers } from "../generated/graphql";
+
 const prisma = new PrismaClient();
 
-export const articleResolvers = {
+export const articleResolvers: Resolvers = {
   Query: {
-    articles: async () => {
-      return await prisma.article.findMany();
+    articles: (_parent, _args, _context, _info) => {
+      return prisma.article.findMany().then((articles) => articles);
     },
-    article: async (_: any, { id }: { id: string }) => {
-      return await prisma.article.findUnique({ where: { id } });
+
+    article: (_parent, args, _context, _info) => {
+      return prisma.article.findUnique({ where: { id: args.id } });
     },
   },
+
   Mutation: {
-    createArticle: async (_: any, { title, content, authorId }: { title: string, content: string, authorId: string }) => {
-      return await prisma.article.create({
+    createArticle: (_parent, args, _context, _info) => {
+      return prisma.article.create({
         data: {
-          title,
-          content,
-          authorId,
+          title: args.title,
+          content: args.content,
+          authorId: args.authorId,
         },
       });
     },
-    updateArticle: async (_: any, { id, title, content }: { id: string, title?: string, content?: string }) => {
-      return await prisma.article.update({
-        where: { id },
+
+    updateArticle: (_parent, args, _context, _info) => {
+      return prisma.article.update({
+        where: { id: args.id },
         data: {
-          title,
-          content,
+          title: args.title ?? undefined,
+          content: args.content ?? undefined,
         },
       });
     },
+<<<<<<< HEAD
     deleteArticle: async (_: any, { id }: { id: string }) => {
       await prisma.article.delete({ where: { id } });
       return `L'article ${id} a bien été supprimé !`;
+=======
+
+    deleteArticle: (_parent, args, _context, _info) => {
+      return prisma.article.delete({ where: { id: args.id } }).then(() => {
+        return `Article with ID ${args.id} deleted successfully.`;
+      });
+>>>>>>> rayane
     },
   },
 };

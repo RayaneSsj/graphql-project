@@ -5,18 +5,18 @@ import { userResolvers } from './revolvers/user.resolver';
 import { articleResolvers } from './revolvers/article.resolver';
 import { commentResolvers } from './revolvers/comment.resolver';
 import { likeResolvers } from './revolvers/like.resolver';
-import { navigationResolvers } from './revolvers/navigation.resolver';
-
-
+import { navigationResolvers } from './revolvers/navigation.resolver.ts';
+ 
+ 
 dotenv.config();
-
+ 
 const typeDefs = `
    type User {
     id: ID!
     name: String!
     email: String!
   }
-
+ 
   type Article {
     id: ID!
     title: String!
@@ -24,20 +24,20 @@ const typeDefs = `
     authorId: String!
     likeCount: Int
   }
-
+ 
   type Comment {
     id: ID!
     content: String!
     articleId: String!
     userId: String!
   }
-
+ 
   type Like {
     id: ID!
     articleId: String!
     userId: String!
   }
-
+ 
   type Query {
     users: [User!]
     articles: [Article!]
@@ -48,7 +48,7 @@ const typeDefs = `
     filterArticlesByAuthor(authorId: String!): [Article!]
     filterArticlesByPopularity(limit: Int): [Article!]
   }
-
+ 
   type Mutation {
     signUp(name: String!, email: String!, password: String!): String
     signIn(email: String!, password: String!): String
@@ -61,9 +61,9 @@ const typeDefs = `
     unlikeArticle(articleId: String!, userId: String!): String
   }
 `;
-
-
-
+ 
+ 
+ 
 const resolvers = {
   Query: {
     ...userResolvers.Query,
@@ -79,9 +79,9 @@ const resolvers = {
     ...commentResolvers.Mutation,
   },
 };
-
+ 
 const server = new ApolloServer({ typeDefs, resolvers });
-
+ 
 startStandaloneServer(server, {
   listen: { port: 4000 },
 }).then(({ url }) => {
