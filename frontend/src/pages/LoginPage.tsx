@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation, gql } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
   const [signIn, { loading, error }] = useMutation(SIGN_IN, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.signIn);
-      navigate("/");
+      navigate("/dashboard");
     },
   });
 
@@ -29,6 +29,19 @@ const LoginPage: React.FC = () => {
       console.error(err);
     }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Supprime le token du localStorage
+    navigate("/login"); // Redirige vers la page de login
+  };
+
+  // Vérifier si l'utilisateur est déjà connecté
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard"); // Si un token est trouvé, redirige vers dashboard
+    }
+  }, [navigate]);
 
   return (
     <div>
@@ -54,6 +67,13 @@ const LoginPage: React.FC = () => {
 
       <p>Pas encore de compte ?</p>
       <button onClick={() => navigate("/register")}>S'inscrire</button>
+
+      {/* Ajouter un bouton de déconnexion si l'utilisateur est connecté */}
+      {localStorage.getItem("token") && (
+        <div>
+          <button onClick={handleLogout}>Se déconnecter</button>
+        </div>
+      )}
     </div>
   );
 };
