@@ -2,17 +2,26 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Types personnalisés pour les retours de mutation
+type LikeMutationResponse = "Article déjà like" | "Article liké" | "Article dislike";
+
+// Typage des paramètres pour les resolvers
+interface LikeArgs {
+  articleId: string;
+  userId: string;
+}
+
 export const likeResolvers = {
   Query: {
-    likes: async (_: any, { articleId }: { articleId: string }) => {
+    likes: async (_: never, { articleId }: { articleId: string }): Promise<number> => {
       const count = await prisma.like.count({
         where: { articleId }
       });
-      return count;
+      return count; // Retourne un nombre (le compte de likes)
     }
   },
   Mutation: {
-    likeArticle: async (_: any, { articleId, userId }: { articleId: string, userId: string }) => {
+    likeArticle: async (_: never, { articleId, userId }: LikeArgs): Promise<LikeMutationResponse> => {
       const existingLike = await prisma.like.findFirst({
         where: {
           articleId,
@@ -20,7 +29,7 @@ export const likeResolvers = {
         }
       });
       if (existingLike) {
-        return "Article déjà like";
+        return "Article déjà like"; // Retourne une chaîne spécifique
       }
       await prisma.like.create({
         data: {
@@ -28,16 +37,16 @@ export const likeResolvers = {
           userId
         }
       });
-      return "Article liké";
+      return "Article liké"; // Retourne une chaîne spécifique
     },
-    unlikeArticle: async (_: any, { articleId, userId }: { articleId: string, userId: string }) => {
+    unlikeArticle: async (_: never, { articleId, userId }: LikeArgs): Promise<LikeMutationResponse> => {
       await prisma.like.deleteMany({
         where: {
           articleId,
           userId
         }
       });
-      return "Article dislike";
+      return "Article dislike"; // Retourne une chaîne spécifique
     }
   }
 };

@@ -21,10 +21,13 @@ export const commentResolvers = {
       });
     },
     deleteComment: async (_: any, { id }: { id: string }) => {
+      const objectId = new prisma.Prisma.ObjectId(id);  // Conversion en ObjectId
       await prisma.comment.delete({
-        where: { id }
+        where: { id: objectId }
       });
-      return "Commentaire ajouté";
+      return "Commentaire supprimé"; 
     }
+    
+    
   }
 };
