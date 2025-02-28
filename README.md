@@ -24,7 +24,7 @@ Ce projet est un réseau social développé avec GraphQL, Apollo Server, Prisma 
 
 ```bash
 npm install -g yarn
-
+```
 
 Le back-end est fonctionnel (authentification, ajout d'article, like, commentaires etc...)
 On peut delete un article dans le back, par contre dans le front on a oublié de l'implémenter et par manque de temps.
